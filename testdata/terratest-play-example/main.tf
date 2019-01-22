@@ -1,4 +1,34 @@
-resource "local_file" "foo" {
-  content  = "foo!"
-  filename = "${path.module}/foo.bar"
+# From https://github.com/gruntwork-io/terratest/blob/master/examples/terraform-aws-example/main.tf
+resource "aws_instance" "example" {
+  ami           = "${data.aws_ami.ubuntu.id}"
+  instance_type = "t2.micro"
+
+  tags {
+    Name = "terratest-play"
+  }
+}
+
+data "aws_ami" "ubuntu" {
+  most_recent = true
+  owners      = ["099720109477"] # Canonical
+
+  filter {
+    name   = "virtualization-type"
+    values = ["hvm"]
+  }
+
+  filter {
+    name   = "architecture"
+    values = ["x86_64"]
+  }
+
+  filter {
+    name   = "image-type"
+    values = ["machine"]
+  }
+
+  filter {
+    name   = "name"
+    values = ["ubuntu/images/hvm-ssd/ubuntu-xenial-16.04-amd64-server-*"]
+  }
 }
